@@ -1,0 +1,30 @@
+.log {
+  font-family: monospace;
+  font-size: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1.6;
+}
+
+.icon { color: #6b7280; flex-shrink: 0; }
+.ts   { color: #9ca3af; flex-shrink: 0; }
+.msg  { color: #374151; }
+
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}

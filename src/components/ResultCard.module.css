@@ -1,0 +1,183 @@
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.meta {
+  font-size: 11px;
+  color: #9ca3af;
+  margin: 3px 0 0;
+}
+
+.badges {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.badgeBlue  { background: #eff6ff; color: #1d4ed8; font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 500; }
+.badgeGray  { background: #f3f4f6; color: #6b7280; font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 500; }
+.badgeGreen { background: #f0fdf4; color: #15803d; font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 500; }
+
+.liveInsight {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #15803d;
+  line-height: 1.5;
+}
+
+.liveLabel {
+  font-weight: 600;
+}
+
+.specGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.specCell {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.specKey {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 2px;
+}
+
+.specVal {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.compliance {
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fffbeb;
+  color: #b45309;
+  line-height: 1.5;
+}
+
+.complianceLabel {
+  font-weight: 600;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.headline {
+  font-family: monospace;
+  font-size: 12px;
+  background: #f9fafb;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #111827;
+  line-height: 1.6;
+  margin-bottom: 5px;
+}
+
+.body {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.powerTactic {
+  padding: 10px 12px;
+  border-left: 2px solid #93c5fd;
+  background: #eff6ff;
+  border-radius: 0 8px 8px 0;
+}
+
+.powerLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1d4ed8;
+  margin-bottom: 3px;
+}
+
+.powerBody {
+  font-size: 12px;
+  color: #1d4ed8;
+  line-height: 1.5;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.timestamp {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btnSecondary {
+  font-size: 12px;
+  padding: 5px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #6b7280;
+  transition: all 0.12s;
+}
+
+.btnSecondary:hover { background: #f9fafb; }
+
+.btnPrimary {
+  font-size: 12px;
+  padding: 5px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 500;
+  transition: all 0.12s;
+}
+
+.btnPrimary:hover { background: #dbeafe; }
