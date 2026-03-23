@@ -15,15 +15,33 @@ export default async function handler(req, res) {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
-      systemInstruction: systemPrompt,
-      generationConfig: {
-        responseMimeType: 'application/json',
-      },
-    })
-    const result = await model.generateContent(userPrompt)
-    const text = result.response.text()
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+
+    const fullPrompt = `${systemPrompt}
+
+CRITICAL: Your entire response must be a single valid JSON array. Start with [ and end with ]. No markdown, no code fences, no explanation text before or after. Just the raw JSON array.
+
+${userPrompt}`
+
+    const result = await model.generateContent(fullPrompt)
+    let text = result.response.text()
+
+    // Strip any markdown fences Gemini adds despite instructions
+    text = text.trim()
+    if (text.startsWith('```')) {
+      text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+    }
+
+    // Find the JSON array boundaries in case there's surrounding text
+    const start = text.indexOf('[')
+    const end = text.lastIndexOf(']')
+    if (start !== -1 && end !== -1 && end > start) {
+      text = text.slice(start, end + 1)
+    }
+
+    // Validate it parses before sending to client
+    JSON.parse(text)
+
     res.json({ text })
   } catch (err) {
     res.status(500).json({ error: err.message })
