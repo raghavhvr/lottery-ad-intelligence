@@ -36,7 +36,7 @@ export default function App() {
     if (running) return
     setRunning(true)
     setLogs([])
-    setActiveTab('Results')
+    setActiveTab('Agent log')
     setStatus({ text: 'Searching web…', mode: 'search' })
 
     addLog('Agent started', '▶')
@@ -63,6 +63,7 @@ export default function App() {
       addLog(`${newResults.length} results generated`, '✓')
       addLog('Saved to localStorage', '✓')
       setStatus({ text: 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), mode: 'idle' })
+      setActiveTab('Results')
     } catch (e) {
       addLog('Generation failed: ' + e.message, '✗')
       setStatus({ text: 'Error', mode: 'error' })
@@ -138,6 +139,9 @@ export default function App() {
             onClick={() => setActiveTab(tab)}
           >
             {tab}
+            {tab === 'Results' && results.length > 0 && (
+              <span className={styles.tabBadge}>{results.length}</span>
+            )}
             {tab === 'Saved' && saved.length > 0 && (
               <span className={styles.tabBadge}>{saved.length}</span>
             )}
@@ -146,7 +150,7 @@ export default function App() {
       </div>
 
       {activeTab === 'Results' && (
-        <div className={styles.resultsArea}>
+        <div className={styles.resultsArea} id="results-area">
           {results.length === 0 ? (
             <div className={styles.empty}>
               Select your filters and hit <strong>Run agent</strong>.<br />
