@@ -10,11 +10,20 @@ import styles from './App.module.css'
 
 const TABS = ['Results', 'Agent log', 'Saved']
 
+function serializeFilters(filters) {
+  const out = {}
+  for (const [k, v] of Object.entries(filters)) {
+    out[k] = [...v]
+  }
+  return out
+}
+
 export default function App() {
   const { filters, toggle } = useFilters()
   const { save, load, remove } = useStorage()
   const [customQuery, setCustomQuery] = useState('')
   const [results, setResults] = useState([])
+  const [runMeta, setRunMeta] = useState(null)
   const [logs, setLogs] = useState([])
   const [saved, setSaved] = useState([])
   const [activeTab, setActiveTab] = useState('Results')
@@ -23,7 +32,10 @@ export default function App() {
 
   useEffect(() => {
     const lastRun = load('last_run')
-    if (lastRun?.results) setResults(lastRun.results)
+    if (lastRun?.results) {
+      setResults(lastRun.results)
+      setRunMeta({ ts: lastRun.ts, filters: lastRun.filters, customQuery: lastRun.customQuery })
+    }
     setSaved(load('saved_cards', []))
   }, [])
 
@@ -36,6 +48,7 @@ export default function App() {
     if (running) return
     setRunning(true)
     setLogs([])
+    setRunMeta(null)
     setActiveTab('Agent log')
     setStatus({ text: 'Searching web…', mode: 'search' })
 
@@ -57,12 +70,19 @@ export default function App() {
     addLog('Sending to Gemini 2.5 Flash with live context…', '→')
 
     try {
-      const newResults = await runGenerate(filters, searchContext, customQuery, addLog)
+      const snapshotFilters = serializeFilters(filters)
+      const snapshotQuery = customQuery
+      const ts = new Date().toISOString()
+
+      const newResults = await runGenerate(filters, searchContext, snapshotQuery, addLog)
+      const meta = { ts, filters: snapshotFilters, customQuery: snapshotQuery }
+
       setResults(newResults)
-      save('last_run', { ts: new Date().toISOString(), results: newResults })
+      setRunMeta(meta)
+      save('last_run', { ts, results: newResults, filters: snapshotFilters, customQuery: snapshotQuery })
       addLog(`${newResults.length} results generated`, '✓')
-      addLog('Saved to localStorage', '✓')
-      setStatus({ text: 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), mode: 'idle' })
+      addLog('Run saved with filter snapshot', '✓')
+      setStatus({ text: 'Updated ' + new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), mode: 'idle' })
       setActiveTab('Results')
     } catch (e) {
       addLog('Generation failed: ' + e.message, '✗')
@@ -73,12 +93,18 @@ export default function App() {
   }, [running, filters, customQuery, addLog, save])
 
   const saveCard = useCallback((result) => {
-    const entry = { ...result, savedAt: new Date().toISOString() }
-    const next = [entry, ...saved].slice(0, 30)
+    const entry = {
+      ...result,
+      savedAt: new Date().toISOString(),
+      runFilters: runMeta?.filters || null,
+      runQuery: runMeta?.customQuery || null,
+      runTs: runMeta?.ts || null,
+    }
+    const next = [entry, ...saved].slice(0, 50)
     setSaved(next)
     save('saved_cards', next)
     addLog('Card saved: ' + result.title, '✓')
-  }, [saved, save, addLog])
+  }, [saved, save, addLog, runMeta])
 
   const clearSaved = useCallback(() => {
     setSaved([])
@@ -104,11 +130,7 @@ export default function App() {
             <span className={styles.statusDot} />
             {status.text}
           </div>
-          <button
-            className={styles.runBtn}
-            onClick={runAgent}
-            disabled={running}
-          >
+          <button className={styles.runBtn} onClick={runAgent} disabled={running}>
             {running ? 'Running…' : 'Run agent →'}
           </button>
         </div>
@@ -151,6 +173,25 @@ export default function App() {
 
       {activeTab === 'Results' && (
         <div className={styles.resultsArea} id="results-area">
+          {runMeta && (
+            <div className={styles.runMeta}>
+              <span className={styles.runMetaTs}>
+                Run: {new Date(runMeta.ts).toLocaleString()}
+              </span>
+              {runMeta.customQuery && (
+                <span className={styles.runMetaQuery}>Brief: "{runMeta.customQuery}"</span>
+              )}
+              <div className={styles.runMetaPills}>
+                {Object.entries(runMeta.filters || {}).map(([group, vals]) =>
+                  vals.map(v => (
+                    <span key={group + v} className={styles.runMetaPill}>
+                      {v}
+                    </span>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
           {results.length === 0 ? (
             <div className={styles.empty}>
               Select your filters and hit <strong>Run agent</strong>.<br />
@@ -171,7 +212,9 @@ export default function App() {
 
       {activeTab === 'Agent log' && <AgentLog logs={logs} />}
 
-      {activeTab === 'Saved' && <SavedCards saved={saved} onClear={clearSaved} />}
+      {activeTab === 'Saved' && (
+        <SavedCards saved={saved} onClear={clearSaved} />
+      )}
     </div>
   )
 }
