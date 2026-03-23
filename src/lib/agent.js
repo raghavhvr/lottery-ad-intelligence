@@ -81,7 +81,7 @@ ${customQuery ? `- Specific brief: ${customQuery}` : ''}
 
 Produce one result object per platform + creativeType combination. Today is March 2026.`
 
-  onLog('Sending to Gemini 1.5 Flash…', '→')
+  onLog('Sending to Gemini 2.5 Flash…', '→')
 
   const res = await fetch(API + '/generate', {
     method: 'POST',

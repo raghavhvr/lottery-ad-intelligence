@@ -54,7 +54,7 @@ export default function App() {
     }
 
     setStatus({ text: 'Generating…', mode: 'live' })
-    addLog('Sending to Gemini 1.5 Flash with live context…', '→')
+    addLog('Sending to Gemini 2.5 Flash with live context…', '→')
 
     try {
       const newResults = await runGenerate(filters, searchContext, customQuery, addLog)
@@ -96,7 +96,7 @@ export default function App() {
       <header className={styles.header}>
         <div>
           <h1 className={styles.appTitle}>Lottery ad intelligence</h1>
-          <p className={styles.appSub}>Middle East · Gemini + Brave Search · Persistent</p>
+          <p className={styles.appSub}>Middle East · Gemini 2.5 Flash + Serper · Persistent</p>
         </div>
         <div className={styles.headerRight}>
           <div className={`${styles.statusChip} ${statusClass}`}>
@@ -150,7 +150,7 @@ export default function App() {
           {results.length === 0 ? (
             <div className={styles.empty}>
               Select your filters and hit <strong>Run agent</strong>.<br />
-              It will search Brave for live data, then generate tailored creative specs via Gemini.
+              It will search Serper for live data, then generate tailored creative specs via Gemini.
             </div>
           ) : (
             results.map((r, i) => (
